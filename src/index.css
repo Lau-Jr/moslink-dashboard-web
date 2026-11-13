@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Tokens from the old static/app.css, as RGB triplets for Tailwind alpha support. */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: 11 15 20;
+  --surface: 17 24 32;
+  --surface-2: 21 29 39;
+  --surface-3: 26 36 48;
+  --border: 40 52 66;
+  --text: 243 247 251;
+  --text-soft: 183 195 210;
+  --text-muted: 145 160 181;
+  --primary: 79 156 249;
+  --success: 74 222 128;
+  --warning: 245 196 81;
+  --danger: 255 107 107;
+  --purple: 167 139 250;
+  --cyan: 34 211 238;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, 0.36);
+
+  /* Chart roles: validated reference palette, dark steps (dataviz palette.md). */
+  --chart-surface: #111820;
+  --chart-grid: rgba(148, 163, 184, 0.14);
+  --chart-axis: #91a0b5;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-8: #e66767;
+  --series-other: #6b7686;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: 246 248 251;
+  --surface: 255 255 255;
+  --surface-2: 249 251 253;
+  --surface-3: 238 243 248;
+  --border: 216 224 234;
+  --text: 17 24 39;
+  --text-soft: 51 65 85;
+  --text-muted: 91 103 120;
+  --primary: 37 99 235;
+  --success: 22 163 74;
+  --warning: 180 108 0;
+  --danger: 220 38 38;
+  --purple: 124 58 237;
+  --cyan: 8 145 178;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 18px 44px rgba(15, 23, 42, 0.14);
+
+  --chart-surface: #ffffff;
+  --chart-grid: rgba(15, 23, 42, 0.08);
+  --chart-axis: #5b6778;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #6250d6;
+  --series-8: #e34948;
+  --series-other: #9aa3ae;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-bg font-sans text-ink antialiased;
+  font-size: 14px;
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-line bg-surface shadow-card;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary/90;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface-2 text-ink-soft hover:bg-surface-3 hover:text-ink;
+  }
+  .btn-danger {
+    @apply btn border border-danger/30 bg-danger/10 text-danger hover:bg-danger/20;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1 text-xs;
+  }
+  .input {
+    @apply w-full rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm text-ink placeholder:text-muted
+      focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+  .label {
+    @apply mb-1 block text-xs font-medium uppercase tracking-wide text-muted;
+  }
+  .table-base {
+    @apply w-full text-left text-sm;
+  }
+  .table-base th {
+    @apply whitespace-nowrap border-b border-line px-3 py-2.5 text-xs font-medium uppercase tracking-wide text-muted;
+  }
+  .table-base td {
+    @apply border-b border-line/60 px-3 py-2.5 align-middle;
+  }
+  .table-base tbody tr:hover {
+    @apply bg-surface-2;
+  }
+}
+
+/* Small screens: tables turn into stacked cards (like the old .responsive-table). */
+@media (max-width: 720px) {
+  .table-responsive thead {
+    display: none;
+  }
+  .table-responsive tr {
+    display: block;
+    border-bottom: 1px solid rgb(var(--border));
+    padding: 8px 0;
+  }
+  .table-responsive td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0 !important;
+    padding: 4px 12px !important;
+  }
+  .table-responsive td::before {
+    content: attr(data-label);
+    color: rgb(var(--text-muted));
+    font-size: 12px;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .card {
+    box-shadow: none;
+    border-color: #ccc;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

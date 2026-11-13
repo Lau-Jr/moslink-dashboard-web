@@ -1,0 +1,27 @@
+# Serve the built dashboard and proxy /api to Flask on the same origin
+# (the session cookie is same-origin only; no CORS needed).
+server {
+    listen 80;
+    server_name admin.example.com;
+
+    root /var/www/moslink-dashboard-web/dist;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 30s;
+    }
+
+    location /assets/ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
+    # Client-side routes (/vouchers, /reports, ...) all serve the SPA.
+    location / {
+        try_files $uri /index.html;
+    }
+}
