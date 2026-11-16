@@ -1,5 +1,6 @@
-import { Pencil, Plug, Plus, Router as RouterIcon } from "lucide-react";
+import { Pencil, Plug, Plus, Router as RouterIcon, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { useSaveSite, useSites, useTestSite } from "@/api/hooks";
 import type { Site } from "@/api/types";
 import { useToast } from "@/components/Toast";
@@ -192,7 +193,14 @@ export function SitesPage() {
                     <td data-label="Sessions" className="text-right tabular-nums">{s.router?.online ? s.router.sessions : "—"}</td>
                     <td data-label="Actions" className="text-right">
                       <div className="inline-flex gap-1.5">
-                        {s.registered && s.api_host && <TestButton code={s.code} />}
+                        {s.registered && s.api_host && (
+                          <>
+                            <Link to={`/sites/${encodeURIComponent(s.code)}`} className="btn-primary btn-sm">
+                              <SlidersHorizontal className="h-3.5 w-3.5" /> Manage
+                            </Link>
+                            <TestButton code={s.code} />
+                          </>
+                        )}
                         <button className="btn-ghost btn-sm" onClick={() => setEditing(s)}>
                           {s.registered ? <Pencil className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
                           {s.registered ? "Edit" : "Set up"}

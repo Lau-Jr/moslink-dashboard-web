@@ -187,6 +187,76 @@ export interface Package {
   seconds: number | null;
 }
 
+// --- router management (/sites/<code>/router/*) ---------------------------------------------
+export interface RouterInterface {
+  id: string;
+  name: string;
+  type: string;
+  running: boolean;
+  disabled: boolean;
+  comment: string | null;
+  rx_bytes: number;
+  tx_bytes: number;
+}
+
+export interface RouterOverview {
+  identity: string | null;
+  uptime: string;
+  uptime_seconds: number;
+  version: string | null;
+  board_name: string | null;
+  model: string | null;
+  serial: string | null;
+  architecture: string | null;
+  cpu_load: number;
+  cpu_count: number | null;
+  free_memory: number;
+  total_memory: number;
+  free_hdd: number;
+  total_hdd: number;
+  interfaces: RouterInterface[];
+}
+
+export interface HotspotServer {
+  id: string;
+  name: string;
+  interface: string;
+  profile: string;
+  address_pool: string | null;
+  disabled: boolean;
+}
+
+export interface HotspotProfile {
+  id: string;
+  name: string;
+  login_by: string[];
+  trial: boolean;
+  trial_uptime_limit: string | null;
+  trial_user_profile: string | null;
+}
+
+export interface HotspotState {
+  servers: HotspotServer[];
+  profiles: HotspotProfile[];
+}
+
+export interface RouterDevice {
+  mac: string;
+  ip: string | null;
+  hostname: string | null;
+  lease_server: string | null;
+  active_id: string | null;
+  user: string | null;
+  uptime: string | null;
+  uptime_seconds: number;
+  time_left: string | null;
+  bytes_in: number;
+  bytes_out: number;
+  blocked: boolean;
+  block_id: string | null;
+  blocked_by_app: boolean;
+}
+
 export interface Health {
   database: "ok" | "unavailable";
   radius: string;

@@ -2,6 +2,9 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tansta
 import { api } from "./client";
 import type {
   Health,
+  HotspotState,
+  RouterDevice,
+  RouterOverview,
   Overview,
   Package,
   Page,
@@ -212,3 +215,73 @@ export function useTestSite() {
       ),
   });
 }
+
+// --- router management (Sites > Manage) ---------------------------------------------------------
+const routerPath = (code: string, rest: string) => `/sites/${encodeURIComponent(code)}/router${rest}`;
+
+export function useRouterOverview(code: string) {
+  return useQuery({
+    queryKey: ["router", code, "overview"],
+    queryFn: ({ signal }) => api.get<RouterOverview>(routerPath(code, "/overview"), undefined, signal),
+    refetchInterval: 5_000,
+    retry: false,
+  });
+}
+
+export function useRouterHotspot(code: string) {
+  return useQuery({
+    queryKey: ["router", code, "hotspot"],
+    queryFn: ({ signal }) => api.get<HotspotState>(routerPath(code, "/hotspot"), undefined, signal),
+    refetchInterval: 10_000,
+    retry: false,
+  });
+}
+
+export function useRouterDevices(code: string) {
+  return useQuery({
+    queryKey: ["router", code, "devices"],
+    queryFn: ({ signal }) =>
+      api.get<{ devices: RouterDevice[] }>(routerPath(code, "/devices"), undefined, signal).then((r) => r.devices),
+    refetchInterval: 10_000,
+    retry: false,
+  });
+}
+
+/** POST a router action, then refresh this router's data and the live pages. */
+function useRouterAction<V>(code: string, toRequest: (v: V) => { path: string; body?: unknown }) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (v: V) => {
+      const { path, body } = toRequest(v);
+      return api.post<{ ok?: boolean; removed?: number }>(routerPath(code, path), body);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["router", code] });
+      invalidateLive(qc);
+    },
+  });
+}
+
+export const useSetHotspot = (code: string) =>
+  useRouterAction(code, ({ id, enabled }: { id: string; enabled: boolean }) => ({
+    path: `/hotspot/${encodeURIComponent(id)}`,
+    body: { enabled },
+  }));
+
+export const useSetTrial = (code: string) =>
+  useRouterAction(code, ({ id, enabled, uptime_limit }: { id: string; enabled: boolean; uptime_limit?: string }) => ({
+    path: `/hotspot/profiles/${encodeURIComponent(id)}/trial`,
+    body: { enabled, uptime_limit },
+  }));
+
+export const useKickDevice = (code: string) =>
+  useRouterAction(code, (id: string) => ({ path: "/devices/kick", body: { id } }));
+
+export const useBlockMac = (code: string) =>
+  useRouterAction(code, ({ mac, block }: { mac: string; block: boolean }) => ({
+    path: block ? "/devices/block" : "/devices/unblock",
+    body: { mac },
+  }));
+
+export const useRebootRouter = (code: string) =>
+  useRouterAction(code, (confirm: string) => ({ path: "/reboot", body: { confirm } }));

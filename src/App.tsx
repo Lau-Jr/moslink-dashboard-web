@@ -9,6 +9,7 @@ import { LoginPage } from "@/features/auth/LoginPage";
 import { OverviewPage } from "@/features/overview/OverviewPage";
 import { ReportsPage } from "@/features/reports/ReportsPage";
 import { SessionsPage } from "@/features/sessions/SessionsPage";
+import { SiteManagePage } from "@/features/sites/SiteManagePage";
 import { SitesPage } from "@/features/sites/SitesPage";
 import { TransactionsPage } from "@/features/transactions/TransactionsPage";
 import { VouchersPage } from "@/features/vouchers/VouchersPage";
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="reports" element={<ReportsPage />} />
         <Route path="transactions" element={<TransactionsPage />} />
         <Route path="sites" element={<SitesPage />} />
+        <Route path="sites/:code" element={<SiteManagePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
